@@ -23,20 +23,22 @@
 # For more information on GitHub Actions for Azure: https://github.com/Azure/Actions
 # For more information on the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
 # For more samples to get started with GitHub Action workflows to deploy to Azure: https://github.com/Azure/actions-workflow-samples
-
-name: Build and Push to Azure ACR
+ 
+```yaml
+name: Build and Push to Azure Container Registry
 
 on:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 permissions:
-  id-token: write
   contents: read
+  id-token: write
 
 env:
-  ACR_LOGIN_SERVER: anwarmlopsacr2026.azurecr.io
+  ACR_LOGIN_SERVER: afnan.azurecr.io
   IMAGE_NAME: bismillah
 
 jobs:
@@ -44,34 +46,35 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout source
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Azure Login using OIDC
         uses: azure/login@v2
         with:
-          client-id: 8b06f38d-8f74-47ec-86f7-afedeb1b39b3
-          tenant-id: dc81841f-8727-43af-80bc-92dce27ddcd4
-          subscription-id: d6990163-6de3-4b54-95c9-edbfdec2d8d9
+          client-id: fc42f037-8c5b-42da-8bd6-f3e94fde0eb3
+          tenant-id: db75e13f-8de5-49f6-8a6b-9b04aba929de
+          subscription-id: b290006b-5f8a-4ca6-8c86-cdc97fad6000
 
-      - name: Login to Azure Container Registry
-        run: |
-          az acr login --name anwarmlopsacr2026
+      - name: Login to ACR
+        run: az acr login --name afnan
 
       - name: Build Docker image
         run: |
           docker build \
-            -t $ACR_LOGIN_SERVER/$IMAGE_NAME:${{ github.sha }} \
-            -t $ACR_LOGIN_SERVER/$IMAGE_NAME:latest \
-            .
+            -t "$ACR_LOGIN_SERVER/$IMAGE_NAME:${GITHUB_SHA}" \
+            -t "$ACR_LOGIN_SERVER/$IMAGE_NAME:latest" .
 
       - name: Push Docker image
         run: |
-          docker push $ACR_LOGIN_SERVER/$IMAGE_NAME:${{ github.sha }}
-          docker push $ACR_LOGIN_SERVER/$IMAGE_NAME:latest
+          docker push "$ACR_LOGIN_SERVER/$IMAGE_NAME:${GITHUB_SHA}"
+          docker push "$ACR_LOGIN_SERVER/$IMAGE_NAME:latest"
+```
 
-      - name: Verify image
-        run: |
-          az acr repository show \
-            --name anwarmlopsacr2026 \
-            --repository bismillah
+ 
+ 
+
+     
+         
+           
+       
